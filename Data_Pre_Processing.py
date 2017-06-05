@@ -13,12 +13,7 @@ for key in attributeDictionary:
     if(attributeDictionary[key] == 'NUMERIC'):
         data[key] = data.groupby("class").transform(lambda x: x.fillna(x.mean()))
         data[key] = pd.cut(data[key], 3,labels=False)
-        # print (key + " :  success")
     else:
         max_item = data[key].value_counts().idxmax()
-        # max_item = items_counts.idmax()
         data[key] = data.groupby("class").transform(lambda x: x.fillna(max_item))
-# print(data.isnull().sum())
 print(data)
-# noClassAvg = Avg[0];
-# yesClassAvg = Avg[1];
