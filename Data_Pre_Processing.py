@@ -1,19 +1,28 @@
 import pandas as pd
-attributeDictionary = {}
-with open('C:\\Users\\Simo\\Desktop\\NaiveBayesData\\Structure.txt','r') as dataStructureFile:
-    for line in dataStructureFile:
-            splitted = line.split();
-            attributeDictionary[splitted[1]] = splitted[2]
-data = pd.read_csv("C:\\Users\\Simo\\Desktop\\NaiveBayesData\\train.csv");
-# groupByclassData = data.groupby('class');
-# data.groupby(['class'])['age'].mean()
-# print(data.isnull().sum())
-print("\n --------------------------------- \n")
-for key in attributeDictionary:
-    if(attributeDictionary[key] == 'NUMERIC'):
-        data[key] = data.groupby("class").transform(lambda x: x.fillna(x.mean()))
-        data[key] = pd.cut(data[key], 3,labels=False)
-    else:
-        max_item = data[key].value_counts().idxmax()
-        data[key] = data.groupby("class").transform(lambda x: x.fillna(max_item))
-print(data)
+import re
+class Data_Pre_Processing:
+
+    def __init__(self,path):
+        self.attributeDictionary = {}
+        with open('C:\\Users\\Simo\\Desktop\\NaiveBayesData\\Structure.txt','r') as dataStructureFile:
+            for line in dataStructureFile:
+                splitted = line.split();
+                self.attributeDictionary[splitted[1]] = splitted[2]
+        self.data = pd.read_csv("C:\\Users\\Simo\\Desktop\\NaiveBayesData\\train.csv");
+        # groupByclassData = data.groupby('class');
+        # data.groupby(['class'])['age'].mean()
+        # print(data.isnull().sum())
+        for key in self.attributeDictionary:
+            if(key == 'class'):
+                a = re.split(',', self.attributeDictionary[key][1:-1])
+                self.attributeDictionary[key] = a
+                continue
+            if(self.attributeDictionary[key] == 'NUMERIC'):
+                self.data[key] = self.data.groupby("class").transform(lambda x: x.fillna(x.mean()))
+                self.data[key] = pd.cut(self.data[key], 3,labels=False)
+                self.attributeDictionary[key] = [0,1,2]
+            else:
+                a = re.split(',',self.attributeDictionary[key][1:-1])
+                self.attributeDictionary[key] = a
+                max_item = self.data[key].value_counts().idxmax()
+                self.data[key] = self.data.groupby("class").transform(lambda x: x.fillna(max_item))
