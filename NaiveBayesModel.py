@@ -12,13 +12,14 @@ class NaiveBayesModel:
             self.m_estimators[Class] = {}
             specificClass = groupsByClass.get_group(Class)
             for Attribute in structure:
-                if(Attribute != 'class'):
-                    self.m_estimators[Class][Attribute] = {}
-                    attCount = specificClass.groupby(Attribute)[Attribute].agg('count')
-                    a = attCount.index[i]
-                    b = attCount[i]
-                    for i in range(attCount.index.size):
-                        self.m_estimators[Class][Attribute][attCount.index[i]] = attCount[i];
+                attCount = specificClass.groupby(Attribute).agg('count')
+#                if(Attribute != 'class'):
+#                    self.m_estimators[Class][Attribute] = {}
+#                    # print(attCount)
+#                    a = attCount.index[0]
+#                    b = attCount[0]
+#                    for i in range(attCount.index.size):
+#                        self.m_estimators[Class][Attribute][attCount.index[i]] = attCount[i];
         print(self.m_estimators)
 
 
