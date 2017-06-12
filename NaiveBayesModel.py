@@ -1,36 +1,62 @@
+from __future__ import division
 import pandas as pd
+
 class NaiveBayesModel:
 
     def __init__(self,trainingDataFrame,structure,m):
+        self.structure = structure
+        self.TotalNum = trainingDataFrame.shape
         countClasses = trainingDataFrame.groupby("class")['class'].agg('count')
-        n = {}
+        self.n = {}
         for i in range(countClasses.index.size):
-            n[countClasses.index[i]] = countClasses[i]
+            self.n[countClasses.index[i]] = countClasses[i]
         self.m_estimators = {}
         groupsByClass = trainingDataFrame.groupby('class')
         for Class in structure['class']:
             self.m_estimators[Class] = {}
             specificClass = groupsByClass.get_group(Class)
             for Attribute in structure:
-                attCount = specificClass.groupby(Attribute).agg('count')
-#                if(Attribute != 'class'):
-#                    self.m_estimators[Class][Attribute] = {}
-#                    # print(attCount)
-#                    a = attCount.index[0]
-#                    b = attCount[0]
-#                    for i in range(attCount.index.size):
-#                        self.m_estimators[Class][Attribute][attCount.index[i]] = attCount[i];
-        print(self.m_estimators)
+                if(Attribute != 'class'):
+                   self.m_estimators[Class][Attribute] = {}
+                   attributeWithClass = specificClass.groupby(Attribute)[Attribute].agg('count')
+                   for i in range(attributeWithClass.index.size):
+                       print(Attribute + " = " + str(len(structure[Attribute])))
+                       self.m_estimators[Class][Attribute][attributeWithClass.index[i]] = (attributeWithClass[i]+len(structure[Attribute])*m)/(self.n[Class]+m);
+        for Class in structure['class']:
+            for Attribute in structure:
+                if (Attribute == 'class'):
+                    continue
+                for item in structure[Attribute]:
+                    if item in self.m_estimators[Class][Attribute]:
+                        continue
+                    else: self.m_estimators[Class][Attribute][item] = 1/(self.n[Class]+m)
 
 
+    def Classfiy(self,path,testSet):
+        open('C:\\Users\\Simo\\Desktop\\NaiveBayesData\\output.txt', 'w+')
+        for row in testSet.itertuples(index=True):
+            argsArray = []
+            for Class in self.structure['class']:
+                arg = 1
+                for Attribute in self.structure:
 
+                    if(Attribute != 'class'):
+                       arg = arg*self.m_estimators[Class][Attribute][getattr(row,Attribute)]
+                argsArray.append(arg*(self.n[Class]/self.TotalNum[0]))
+            a = argsArray.index(max(argsArray))
+            classified = self.structure['class'][a]
+            with open('C:\\Users\\Simo\\Desktop\\NaiveBayesData\\output.txt', 'a') as output:
+                output.write(str(getattr(row,Attribute))+ " "+ classified+"\n")
+        print ("finished")
 
+    def Accuracy(self,testData, pathToOutput):
+        with open('C:\\Users\\Simo\\Desktop\\NaiveBayesData\\output.txt','r') as f:
+            content = f.readlines()
+            total = 0
+            matching = 0
+            for i in range(len(content)):
+                total = total + 1
+                if(testData['class'].iloc[i] == content[i].split()[1]):
+                    matching = matching+1
 
-
-    def estimate(self,trainingDataFrame,Attribute,Class,m,n):
-         a = trainingDataFrame.groupby(['class',Attribute])[Attribute].agg('count')
-
-
-
-    def Classfiy(self):
-        print()
+            print (matching/total)
