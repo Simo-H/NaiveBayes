@@ -22,7 +22,7 @@ class NaiveBayesModel:
                    attributeWithClass = specificClass.groupby(Attribute)[Attribute].agg('count')
                    for i in range(attributeWithClass.index.size):
                        print(Attribute + " = " + str(len(structure[Attribute])))
-                       self.m_estimators[Class][Attribute][attributeWithClass.index[i]] = (attributeWithClass[i]+(1/len(structure[Attribute]))*m)/(self.n[Class]+m);
+                       self.m_estimators[Class][Attribute][attributeWithClass.index[i]] = (attributeWithClass[i]+(1/len(structure['class']))*m)/(self.n[Class]+m);
         for Class in structure['class']:
             for Attribute in structure:
                 if (Attribute == 'class'):
@@ -30,11 +30,11 @@ class NaiveBayesModel:
                 for item in structure[Attribute]:
                     if item in self.m_estimators[Class][Attribute]:
                         continue
-                    else: self.m_estimators[Class][Attribute][item] = ((1/len(structure[Attribute]))*m)/(self.n[Class]+m)
-
+                    else: self.m_estimators[Class][Attribute][item] = ((1/len(structure['class']))*m)/(self.n[Class]+m)
+        i=8;
 
     def Classfiy(self,path,testSet):
-        open('C:\\Users\\Stav\\Desktop\\output.txt', 'w+')
+        open(path+"\\output.txt", 'w+')
         for row in testSet.itertuples(index=True):
             argsArray = []
             for Class in self.structure['class']:
@@ -46,12 +46,12 @@ class NaiveBayesModel:
                 argsArray.append(arg*(self.n[Class]/self.TotalNum[0]))
             a = argsArray.index(max(argsArray))
             classified = self.structure['class'][a]
-            with open('C:\\Users\\Stav\\Desktop\\output.txt', 'a') as output:
+            with open(path+"\\output.txt", 'a') as output:
                 output.write(str(getattr(row,Attribute))+ " "+ classified+"\n")
         print ("finished")
 
     def Accuracy(self,testData, pathToOutput):
-        with open('C:\\Users\\Stav\\Desktop\\output.txt','r') as f:
+        with open(pathToOutput+"\\output.txt",'r') as f:
             content = f.readlines()
             total = 0
             matching = 0

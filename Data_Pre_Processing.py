@@ -4,11 +4,11 @@ class Data_Pre_Processing:
 
     def __init__(self,path,bins):
         self.attributeDictionary = {}
-        with open('C:\\Users\\Stav\\Desktop\\Structure.txt','r') as dataStructureFile:
+        with open(path+"\\Structure.txt",'r') as dataStructureFile:
             for line in dataStructureFile:
                 splitted = line.split();
                 self.attributeDictionary[splitted[1]] = splitted[2]
-        self.data = pd.read_csv("C:\\Users\\Stav\\Desktop\\train.csv");
+        self.data = pd.read_csv(path+"\\train.csv");
 
         for key in self.attributeDictionary:
             if(key == 'class'):
@@ -24,9 +24,10 @@ class Data_Pre_Processing:
                 self.attributeDictionary[key] = a
                 b = self.data[key].mode()[0]
                 self.data[key].fillna(b,inplace=True)
+        num=1
 
     def processTestSet(self,path,bins):
-        testSet = pd.read_csv("C:\\Users\\Stav\\Desktop\\test.csv");
+        testSet = pd.read_csv(path+"\\test.csv");
         for key in self.attributeDictionary:
             if(key == 'class'):
                 continue

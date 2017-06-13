@@ -2,15 +2,14 @@ from Tkinter import *
 import tkFileDialog
 import os.path
 
-from Preprossing_and_Classfiy import Preprossing_and_Classfiy;
+from Data_Pre_Processing import Data_Pre_Processing;
+from NaiveBayesModel import NaiveBayesModel;
 
 class GUI:
     def __init__(self):
-#        self.PC;
-#        self.filename;
-#        self.pathStructure
-#        self.pathtrain
-#        self.pathtest
+       # self.DPP = None;
+       # self.testSet=None;
+       # self.NBM=None;
         self.root = Tk()
         label_0 = Label(self.root, text="")
         label_1=Label(self.root, text= "Directory Path:")
@@ -41,7 +40,7 @@ class GUI:
         Build = Button(text = "Build",command=self.build )
         Build.grid(columnspan=4,row=8)
 
-        Classify = Button(text = "Classify")
+        Classify = Button(text = "Classify",command=self.classify)
         Classify.grid(columnspan=4,row=12)
 
         self.root.mainloop()
@@ -59,27 +58,37 @@ class GUI:
 
 
     def build(self):
-        self.bins= self.entry_2.get();
+        self.bins=int(float(self.entry_2.get())) ;
         self.path = self.entry_1.get();
+        self.m= 2
         bool=os.path.exists(self.filename)
-        if (bool==True and self.bins!="0"):
-            self.pathStructure=self.filename+"/Structure.txt"
-            self.pathtrain= self.filename+"/train.csv"
-            self.pathtest= self.filename+"/test.csv"
-          #  bool=os.path.exists(pathStructure)
-            if( os.path.exists(pathStructure)==False or (os.path.getsize(pathStructure) > 0)==False):
+        if (bool==True and self.bins>0):
+            self.pathStructure=self.filename+"\\Structure.txt"
+            self.pathtrain= self.filename+"\\train.csv"
+            self.pathtest= self.filename+"\\test.csv"
+
+            if( os.path.exists(self.pathStructure)==False or (os.path.getsize(self.pathStructure) > 0)==False):
                 import tkMessageBox
                 tkMessageBox.showinfo(title="error", message="pathStructure unvalid")
                 return;
-            if( os.path.exists(pathtrain)=="false" or (os.path.getsize(pathtrain) > 0)=="false"):
+            if( os.path.exists(self.pathtrain)==False or (os.path.getsize(self.pathtrain) > 0)==False):
                 import tkMessageBox
                 tkMessageBox.showinfo(title="error", message="path train unvalid")
                 return;
-            if( os.path.exists(pathtest)=="false" or (os.path.getsize(pathtest) > 0)=="false"):
+            if( os.path.exists(self.pathtest)==False or (os.path.getsize(self.pathtest) > 0)==False):
                 import tkMessageBox
                 tkMessageBox.showinfo(title="error", message="path test unvalid")
                 return;
-        self.PC=Preprossing_and_Classfiy( path, bins,2);
-        self.PC.DPP=self.PC.Bulid();
+
+            self.DPP = Data_Pre_Processing(self.path, self.bins)
+            self.NBM = NaiveBayesModel(self.DPP.data, self.DPP.attributeDictionary, self.m);
+        #self.PC=Preprossing_and_Classfiy( self.path, self.bins ,2);
+        #self.PC.Bulid();
+
+
+    def classify(self):
+        self.testSet = Data_Pre_Processing.processTestSet(self.DPP, self.path, self.bins);
+        self.NBM.Classfiy(self.path, self.testSet);
+        self.NBM.Accuracy( self.testSet, self.path);
 
 
