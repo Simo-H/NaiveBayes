@@ -58,7 +58,18 @@ class GUI:
 
 
     def build(self):
-        self.bins=int(float(self.entry_2.get())) ;
+        self.bins=self.entry_2.get();
+        if (self.entry_2.get()==''):
+            import tkMessageBox
+            tkMessageBox.showinfo(title="error", message="Number of Bins unvalid")
+            return;
+
+
+        self.bins=int(float(self.entry_2.get()));
+        if (self.bins>=0):
+            import tkMessageBox
+            tkMessageBox.showinfo(title="error", message="Number of Bins unvalid")
+            return;
         self.path = self.entry_1.get();
         self.m= 2
         bool=os.path.exists(self.filename)
@@ -82,7 +93,18 @@ class GUI:
 
             self.DPP = Data_Pre_Processing(self.path, self.bins)
             self.NBM = NaiveBayesModel(self.DPP.data, self.DPP.attributeDictionary, self.m);
-        #self.PC=Preprossing_and_Classfiy( self.path, self.bins ,2);
+
+            import tkMessageBox
+            tkMessageBox.showinfo(title="building", message="Building classifier using train_set is done!")
+            return;
+
+
+        import tkMessageBox
+        tkMessageBox.showinfo(title="path", message="unvalid path or Bins number")
+        return;
+
+
+            #self.PC=Preprossing_and_Classfiy( self.path, self.bins ,2);
         #self.PC.Bulid();
 
 
@@ -90,5 +112,8 @@ class GUI:
         self.testSet = Data_Pre_Processing.processTestSet(self.DPP, self.path, self.bins);
         self.NBM.Classfiy(self.path, self.testSet);
         self.NBM.Accuracy( self.testSet, self.path);
+        import tkMessageBox
+        tkMessageBox.showinfo(title="Classifier", message="Classifier done! ")
+        return;
 
 
