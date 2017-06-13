@@ -63,10 +63,15 @@ class GUI:
             import tkMessageBox
             tkMessageBox.showinfo(title="error", message="Number of Bins unvalid")
             return;
-
+        try:
+            int(self.bins)
+        except ValueError:
+            import tkMessageBox
+            tkMessageBox.showinfo(title="error", message="Number of Bins unvalid")
+            return;
 
         self.bins=int(float(self.entry_2.get()));
-        if (self.bins>=0):
+        if (self.bins <= 0):
             import tkMessageBox
             tkMessageBox.showinfo(title="error", message="Number of Bins unvalid")
             return;
