@@ -21,7 +21,14 @@ class NaiveBayesModel:
                    self.m_estimators[Class][Attribute] = {}
                    attributeWithClass = specificClass.groupby(Attribute)[Attribute].agg('count')
                    for i in range(attributeWithClass.index.size):
-                       print(Attribute + " = " + str(len(structure[Attribute])))
+                       if((Class == "no") and (Attribute== "previous")):
+                           print(attributeWithClass)
+                           print("stop")
+                       # print(Attribute + " = " + str(len(structure[Attribute])))
+                       print(Class + " -- " + Attribute + " -- " + " : "  + "\n")
+                       print (attributeWithClass.index[i])
+                       print (str(attributeWithClass[i]))
+                       if (attributeWithClass[i])
                        self.m_estimators[Class][Attribute][attributeWithClass.index[i]] = (attributeWithClass[i]+(1/len(structure['class']))*m)/(self.n[Class]+m);
         for Class in structure['class']:
             for Attribute in structure:
