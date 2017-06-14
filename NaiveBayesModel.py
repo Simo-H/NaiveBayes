@@ -14,20 +14,14 @@ class NaiveBayesModel:
         self.m_estimators = {}
         groupsByClass = trainingDataFrame.groupby('class')
         for Class in structure['class']:
-            print(Class)
             self.m_estimators[Class] = {}
             specificClass = groupsByClass.get_group(Class)
             for Attribute in structure:
                 if(Attribute != 'class'):
-                   print(Attribute)
-                   if(Attribute == "previous"):
-                       print ()
                    self.m_estimators[Class][Attribute] = {}
                    attributeWithClass = specificClass.groupby(Attribute)[Attribute].agg('count')
                    for i in attributeWithClass.index:
-                       print(i)
-                       print(attributeWithClass[attributeWithClass.index.get_loc(i)])
-                       self.m_estimators[Class][Attribute][i] = (attributeWithClass[attributeWithClass.index.get_loc(i)]+(1/len(structure['class']))*m)/(self.n[Class]+m);
+                       self.m_estimators[Class][Attribute][i] = (attributeWithClass[i]+(1/len(structure['class']))*m)/(self.n[Class]+m);
         for Class in structure['class']:
             for Attribute in structure:
                 if (Attribute == 'class'):
@@ -36,7 +30,7 @@ class NaiveBayesModel:
                     if item in self.m_estimators[Class][Attribute]:
                         continue
                     else: self.m_estimators[Class][Attribute][item] = ((1/len(structure['class']))*m)/(self.n[Class]+m)
-        i=8;
+
 
     def Classfiy(self,path,testSet):
         open(path+"\\output.txt", 'w+')
