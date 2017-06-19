@@ -6,10 +6,9 @@ from Data_Pre_Processing import Data_Pre_Processing;
 from NaiveBayesModel import NaiveBayesModel;
 
 class GUI:
+    # This is the User Interface
     def __init__(self):
-       # self.DPP = None;
-       # self.testSet=None;
-       # self.NBM=None;
+        # building the UI
         self.root = Tk()
         label_0 = Label(self.root, text="")
         label_1=Label(self.root, text= "Directory Path:")
@@ -44,7 +43,7 @@ class GUI:
         Classify.grid(columnspan=4,row=12)
 
         self.root.mainloop()
-
+    #browse
     def browsecsv(self):
         from tkFileDialog import askopenfilename
 
@@ -56,8 +55,9 @@ class GUI:
        # root.after(1, update)
         #build(self);
 
-
+    # input validation and building the model
     def build(self):
+        import tkMessageBox
         self.bins=self.entry_2.get();
         if (self.entry_2.get()==''):
             import tkMessageBox
@@ -96,10 +96,12 @@ class GUI:
                 tkMessageBox.showinfo(title="error", message="path test unvalid")
                 return;
 
-            self.DPP = Data_Pre_Processing(self.path, self.bins)
+            self.DPP = Data_Pre_Processing(self.path, self.bins);
+            if(self.DPP.binsAreGood is False):
+                tkMessageBox.showinfo(title="Error", message="Bins number is invalid. Please change bins number and start again.");
+                self.DPP = None;
+                return;
             self.NBM = NaiveBayesModel(self.DPP.data, self.DPP.attributeDictionary, self.m);
-
-            import tkMessageBox
             tkMessageBox.showinfo(title="building", message="Building classifier using train_set is done!")
             return;
 
@@ -112,7 +114,7 @@ class GUI:
             #self.PC=Preprossing_and_Classfiy( self.path, self.bins ,2);
         #self.PC.Bulid();
 
-
+    # classifying
     def classify(self):
         self.testSet = Data_Pre_Processing.processTestSet(self.DPP, self.path, self.bins);
         self.NBM.Classfiy(self.path, self.testSet);
